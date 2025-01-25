@@ -8,8 +8,30 @@ const app = new Hono<{
     DATABASE_URL: string;
     JWT_SECRET: string;
   };
+  Variables: {
+    userId: string;
+  };
 }>();
+// --------------------------------------------------
 
+app.use("/api/v1/blog/*", async (c, next) => {
+  const jwt = c.req.header("Authorization");
+  if (!jwt) {
+    c.status(401);
+    return c.json({ error: "unauthorized" });
+  }
+  const token = jwt.split(" ")[1];
+  try {
+    const payload = (await verify(token, c.env.JWT_SECRET)) as { id: string };
+    c.set("userId", payload.id);
+    await next();
+  } catch (error) {
+    c.status(401);
+    return c.json({ error: "unauthorized" });
+  }
+});
+
+// --------------------------------------------------
 app.post("/api/v1/user/signup", async (c) => {
   try {
     const prisma = new PrismaClient({
@@ -44,30 +66,31 @@ app.post("/api/v1/user/signup", async (c) => {
   }
 });
 
-app.post("/api/v1/user/signin", async (c) => {
+app.post("/api/v1/signin", async (c) => {
   const prisma = new PrismaClient({
-    datasourceUrl: c.env.DATABASE_URL,
+    datasourceUrl: c.env?.DATABASE_URL,
   }).$extends(withAccelerate());
 
   const body = await c.req.json();
-
-  const userExists = await prisma.user.findFirst({
+  const userExists = await prisma.user.findUnique({
     where: {
       email: body.email,
-      password: body.password,
+    },
+    select: {
+      id: true,
     },
   });
 
   if (!userExists) {
-    c.json({
-      message: "user doesnot exists",
-    });
-  } else {
-    const token = sign({ id: userExists.id }, c.env.JWT_SECRET);
-
-    return c.json({ token });
+    c.status(403);
+    return c.json({ error: "user not found" });
   }
+
+  const jwt = await sign({ id: userExists.id }, c.env.JWT_SECRET);
+  return c.json({ jwt });
 });
+
+// --------------------------------------------------
 
 app.post("/api/v1/blog", (c) => {
   return c.text("post blog");
