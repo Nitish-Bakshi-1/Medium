@@ -96,10 +96,40 @@ blogRouter.put("/", async (c) => {
   });
 });
 
-blogRouter.get("/", (c) => {
-  return c.text("get blog with id");
+blogRouter.get("/", async (c) => {
+  const prisma = new PrismaClient({
+    datasourceUrl: c.env.DATABASE_URL,
+  }).$extends(withAccelerate());
+  const postId = c.req.query("id");
+  const response = await prisma.post.findUnique({
+    where: {
+      id: postId,
+    },
+  });
+  if (!response) {
+    c.json({
+      message: "error in getting posts",
+    });
+  }
+  return c.json({
+    post: response,
+  });
 });
 
-blogRouter.get("/api/v1/blog/bulk", (c) => {
-  return c.text("get all blogs");
+blogRouter.get("/bulk", async (c) => {
+  const prisma = new PrismaClient({
+    datasourceUrl: c.env.DATABASE_URL,
+  }).$extends(withAccelerate());
+
+  const allPosts = await prisma.post.findMany({});
+
+  if (!allPosts) {
+    c.json({
+      message: "unable to fetch posts",
+    });
+  }
+
+  return c.json({
+    posts: allPosts,
+  });
 });
