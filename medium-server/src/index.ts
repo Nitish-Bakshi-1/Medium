@@ -34,7 +34,6 @@ app.post("/api/v1/user/signup", async (c) => {
     const payload = {
       id: userCreated.id,
     };
-
     const secret = c.env.JWT_SECRET;
 
     const token = await sign(payload, secret);
