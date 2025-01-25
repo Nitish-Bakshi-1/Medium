@@ -1,8 +1,23 @@
+import { BlogComp } from "../components/BlogComp";
 const Blog = () => {
   return (
-    <div className="w-full">
-      <div className="w-[80%]">1</div>
-      <div className="w-[20%]"></div>
+    <div className="w-full h-screen flex">
+      <div className="w-[70%] h-full flex justify-start  p-20 items-center flex-col">
+        <BlogComp
+          title="hola hola "
+          description="Kendrick lamar is also ok kendrick lamar is also ok v kendrick lamar is also ok kendrick lamar is also ok kendrick lamar is also ok kendrick lamar is also ok v kendrick lamar is also ok kendrick lamar is also o"
+          timeStamp={"12PM, today"}
+        />
+      </div>
+      <div className="w-[30%] h-full flex justify-start p-20 items-center flex-col">
+        <h2 className="w-full ">Author</h2>
+        <div className="w-full mt-4">
+          <h1 className="w-full p-4 font-bold text-xl">Author name</h1>
+          <p className="w-full ">
+            bio of author bio of author bio of author bio of author
+          </p>
+        </div>
+      </div>
     </div>
   );
 };
