@@ -24,7 +24,7 @@ const Signup = () => {
       localStorage.setItem("token", token);
       navigate("/blog/1");
     } catch (error) {
-      alert("error while sending signup req to BE");
+      alert("error in signup(request failed buddy!)");
       console.log(error);
     }
   };

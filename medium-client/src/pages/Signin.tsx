@@ -3,13 +3,30 @@ import LabeledInputs from "../components/LabeledInputs";
 import { Button } from "../components/Button1";
 import { signinInputs } from "@nitishbakshi/medium-common";
 import { useState } from "react";
+import axios from "axios";
+import { BACKEND_URL } from "../config";
+
 const Signin = () => {
   const [postInputs, setPostInputs] = useState<signinInputs>({
-    name: "",
     email: "",
     password: "",
   });
   const navigate = useNavigate();
+
+  const sendSiginReq = async () => {
+    try {
+      const response = await axios.post(
+        `${BACKEND_URL}/api/v1/user/signin`,
+        postInputs
+      );
+      const jwt = response.data.jwt;
+      localStorage.setItem("token", jwt);
+    } catch (error) {
+      console.log(error);
+      alert("error in signin(request failed buddy!)");
+    }
+  };
+
   return (
     <div className="w-full h-screen flex ">
       <div className="w-[50%] h-full flex flex-col gap-4 justify-center items-center">
@@ -30,17 +47,7 @@ const Signin = () => {
             onChange={(e) => {
               setPostInputs((postInputs) => ({
                 ...postInputs,
-                name: e.target.value,
-              }));
-            }}
-            name="username"
-            placeholder={"Enter your username"}
-          />
-          <LabeledInputs
-            onChange={(e) => {
-              setPostInputs((postInputs) => ({
-                ...postInputs,
-                password: e.target.value,
+                email: e.target.value,
               }));
             }}
             name="email"
@@ -50,14 +57,14 @@ const Signin = () => {
             onChange={(e) => {
               setPostInputs((postInputs) => ({
                 ...postInputs,
-                email: e.target.value,
+                password: e.target.value,
               }));
             }}
             name="password"
             placeholder="******"
           />
 
-          <Button onCLickFn={() => {}} text={"Signin"}></Button>
+          <Button onCLickFn={sendSiginReq} text={"Signin"}></Button>
         </div>
       </div>
       <div className="w-[50%] h-full bg-[#F3F4F6] text-[#18191B] flex flex-col justify-center items-center">
