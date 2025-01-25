@@ -44,8 +44,29 @@ app.post("/api/v1/user/signup", async (c) => {
   }
 });
 
-app.post("/api/v1/user/signin", (c) => {
-  return c.text("signin");
+app.post("/api/v1/user/signin", async (c) => {
+  const prisma = new PrismaClient({
+    datasourceUrl: c.env.DATABASE_URL,
+  }).$extends(withAccelerate());
+
+  const body = await c.req.json();
+
+  const userExists = await prisma.user.findFirst({
+    where: {
+      email: body.email,
+      password: body.password,
+    },
+  });
+
+  if (!userExists) {
+    c.json({
+      message: "user doesnot exists",
+    });
+  } else {
+    const token = sign({ id: userExists.id }, c.env.JWT_SECRET);
+
+    return c.json({ token });
+  }
 });
 
 app.post("/api/v1/blog", (c) => {
