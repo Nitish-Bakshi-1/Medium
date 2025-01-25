@@ -2,13 +2,10 @@ import { PrismaClient } from "@prisma/client/edge";
 import { withAccelerate } from "@prisma/extension-accelerate";
 import { Hono } from "hono";
 import { verify } from "hono/jwt";
-import { z } from "zod";
-
-const blogSchema = z.object({
-  title: z.string().min(5),
-  content: z.string().min(10),
-  published: z.boolean(),
-});
+import {
+  createBlogSchema,
+  updateBlogSchema,
+} from "@nitishbakshi/medium-common";
 
 export const blogRouter = new Hono<{
   Bindings: {
@@ -50,31 +47,43 @@ blogRouter.use("/*", async (c, next) => {
 });
 
 blogRouter.post("/", async (c) => {
-  const authorId = c.get("userid");
+  try {
+    const authorId = c.get("userid");
 
-  const prisma = new PrismaClient({
-    datasourceUrl: c.env.DATABASE_URL,
-  }).$extends(withAccelerate());
+    const prisma = new PrismaClient({
+      datasourceUrl: c.env.DATABASE_URL,
+    }).$extends(withAccelerate());
 
-  const body = await c.req.json();
+    const preBody = await c.req.json();
+    const body = createBlogSchema.safeParse(preBody);
+    if (!body.success) {
+      return c.json({
+        message: "invalid blog inputs",
+      });
+    }
 
-  const createPost = await prisma.post.create({
-    data: {
-      title: body.title,
-      content: body.content,
-      published: body.published,
-      authorId: authorId,
-    },
-  });
-  if (!createPost) {
+    const createBlog = await prisma.post.create({
+      data: {
+        title: body.data.title,
+        content: body.data.content,
+        published: body.data.published,
+        authorId: authorId,
+      },
+    });
+    if (!createBlog) {
+      return c.json({
+        message: "put some valid inputs (post not created)",
+      });
+    }
     return c.json({
-      message: "put some valid inputs (post not created)",
+      message: "post created",
+      post: createBlog,
+    });
+  } catch (error) {
+    return c.json({
+      error: error,
     });
   }
-  return c.json({
-    message: "post created",
-    post: createPost,
-  });
 });
 
 blogRouter.put("/", async (c) => {
@@ -88,14 +97,19 @@ blogRouter.put("/", async (c) => {
       error: "post id invalid",
     });
   }
-  const body = await c.req.json();
+  const preBody = await c.req.json();
+  const body = updateBlogSchema.safeParse(preBody);
+  if (!body.success) {
+    return c.json({
+      message: "invalid inputs for updating Blog",
+    });
+  }
 
   const response = await prisma.post.update({
     where: { id: postId },
     data: {
-      title: body.title,
-      content: body.content,
-      published: body.published,
+      title: body.data.title,
+      content: body.data.content,
     },
   });
   return c.json({

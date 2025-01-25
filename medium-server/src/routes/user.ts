@@ -2,14 +2,7 @@ import { Hono } from "hono";
 import { PrismaClient } from "@prisma/client/edge";
 import { withAccelerate } from "@prisma/extension-accelerate";
 import { sign, verify } from "hono/jwt";
-import { z } from "zod";
-
-const userSchema = z.object({
-  email: z.string().min(5).max(50).email().trim(),
-  password: z.string().min(8).max(50).trim(),
-  name: z.string().optional(),
-});
-type userSchema = z.infer<typeof userSchema>;
+import { signupSchema, signinSchema } from "@nitishbakshi/medium-common";
 
 export const userRouter = new Hono<{
   Bindings: {
@@ -25,8 +18,9 @@ userRouter.post("/signup", async (c) => {
     }).$extends(withAccelerate());
 
     const preBody = await c.req.json();
-    const body = userSchema.safeParse(preBody);
+    const body = signupSchema.safeParse(preBody);
     if (!body.success) {
+      c.status(401);
       return c.json({
         message: "invalid credentials",
       });
@@ -59,7 +53,7 @@ userRouter.post("/signin", async (c) => {
     }).$extends(withAccelerate());
 
     const preBody = await c.req.json();
-    const body = userSchema.safeParse(preBody);
+    const body = signinSchema.safeParse(preBody);
     if (!body.success) {
       return c.json({
         message: "invalid credentials",
