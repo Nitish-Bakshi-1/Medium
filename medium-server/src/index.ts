@@ -15,23 +15,6 @@ const app = new Hono<{
   };
 }>();
 
-app.use("/api/v1/blog/*", async (c, next) => {
-  const jwt = c.req.header("Authorization");
-  if (!jwt) {
-    c.status(401);
-    return c.json({ error: "unauthorized" });
-  }
-  const token = jwt.split(" ")[1];
-  try {
-    const payload = (await verify(token, c.env.JWT_SECRET)) as { id: string };
-    c.set("userId", payload.id);
-    await next();
-  } catch (error) {
-    c.status(401);
-    return c.json({ error: "unauthorized" });
-  }
-});
-
 app.route("api/v1/user", userRouter);
 app.route("api/v1/blog", blogRouter);
 
