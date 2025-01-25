@@ -2,6 +2,12 @@ import { Hono } from "hono";
 import { PrismaClient } from "@prisma/client/edge";
 import { withAccelerate } from "@prisma/extension-accelerate";
 import { sign, verify } from "hono/jwt";
+import { z } from "zod";
+
+const userSchema = z.object({
+  email: z.string().min(5).max(50).email().trim(),
+  password: z.string().min(8).max(50).trim(),
+});
 
 export const userRouter = new Hono<{
   Bindings: {
@@ -16,7 +22,8 @@ userRouter.post("/signup", async (c) => {
       datasourceUrl: c.env.DATABASE_URL,
     }).$extends(withAccelerate());
 
-    const body = await c.req.json();
+    const preBody = await c.req.json();
+    const body = userSchema.parse(preBody);
 
     const userCreated = await prisma.user.create({
       data: {
@@ -24,12 +31,6 @@ userRouter.post("/signup", async (c) => {
         password: body.password,
       },
     });
-
-    if (!userCreated) {
-      return c.json({
-        error: "error in signup",
-      });
-    }
 
     const payload = {
       id: userCreated.id,
@@ -40,30 +41,38 @@ userRouter.post("/signup", async (c) => {
 
     return c.json({ token: token });
   } catch (error) {
-    c.json({ error: error });
+    return c.json({ error: error });
   }
 });
 
 userRouter.post("/signin", async (c) => {
-  const prisma = new PrismaClient({
-    datasourceUrl: c.env.DATABASE_URL,
-  }).$extends(withAccelerate());
+  try {
+    const prisma = new PrismaClient({
+      datasourceUrl: c.env.DATABASE_URL,
+    }).$extends(withAccelerate());
 
-  const body = await c.req.json();
-  const userExists = await prisma.user.findUnique({
-    where: {
-      email: body.email,
-    },
-    select: {
-      id: true,
-    },
-  });
+    const preBody = await c.req.json();
+    const body = userSchema.parse(preBody);
 
-  if (!userExists) {
-    c.status(403);
-    return c.json({ error: "user not found" });
+    const userExists = await prisma.user.findUnique({
+      where: {
+        email: body.email,
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    if (!userExists) {
+      c.status(403);
+      return c.json({ error: "user not found" });
+    }
+
+    const jwt = await sign({ id: userExists.id }, c.env.JWT_SECRET);
+    return c.json({ jwt });
+  } catch (error) {
+    return c.json({
+      error: error,
+    });
   }
-
-  const jwt = await sign({ id: userExists.id }, c.env.JWT_SECRET);
-  return c.json({ jwt });
 });
