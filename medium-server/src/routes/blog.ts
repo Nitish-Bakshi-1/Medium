@@ -70,8 +70,30 @@ blogRouter.post("/", async (c) => {
   });
 });
 
-blogRouter.put("/", (c) => {
-  return c.text("update blog");
+blogRouter.put("/", async (c) => {
+  const prisma = new PrismaClient({
+    datasourceUrl: c.env.DATABASE_URL,
+  }).$extends(withAccelerate());
+
+  const postId = c.req.query("id");
+  if (!postId) {
+    c.json({
+      error: "post id invalid",
+    });
+  }
+  const body = await c.req.json();
+
+  const response = await prisma.post.update({
+    where: { id: postId },
+    data: {
+      title: body.title,
+      content: body.content,
+      published: body.published,
+    },
+  });
+  return c.json({
+    message: "post updated",
+  });
 });
 
 blogRouter.get("/", (c) => {
