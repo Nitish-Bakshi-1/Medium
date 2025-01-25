@@ -21,6 +21,7 @@ const Signin = () => {
       );
       const jwt = response.data.jwt;
       localStorage.setItem("token", jwt);
+      navigate("/blog/1");
     } catch (error) {
       console.log(error);
       alert("error in signin(request failed buddy!)");

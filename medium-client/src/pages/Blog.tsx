@@ -1,11 +1,13 @@
 import { BlogComp } from "../components/BlogComp";
 const Blog = () => {
   return (
-    <div className="w-full h-screen flex">
+    <div className="w-full h-screen flex border">
       <div className="w-[70%] h-full flex justify-start  p-20 items-center flex-col">
         <BlogComp
-          title="hola hola "
-          description="Kendrick lamar is also ok kendrick lamar is also ok v kendrick lamar is also ok kendrick lamar is also ok kendrick lamar is also ok kendrick lamar is also ok v kendrick lamar is also ok kendrick lamar is also o"
+          title="hola hola"
+          publishDate="25 Jan, 2025 "
+          authorName="Kendrick"
+          content="Kendrick lamar is also ok kendrick lamar is also ok v kendrick lamar is also ok kendrick lamar is also ok kendrick lamar is also ok kendrick lamar is also ok v kendrick lamar is also ok kendrick lamar is also o"
         />
       </div>
       <div className="w-[30%] h-full flex justify-start p-20 items-center flex-col">
