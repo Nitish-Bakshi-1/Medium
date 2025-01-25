@@ -2,6 +2,13 @@ import { PrismaClient } from "@prisma/client/edge";
 import { withAccelerate } from "@prisma/extension-accelerate";
 import { Hono } from "hono";
 import { verify } from "hono/jwt";
+import { z } from "zod";
+
+const blogSchema = z.object({
+  title: z.string().min(5),
+  content: z.string().min(10),
+  published: z.boolean(),
+});
 
 export const blogRouter = new Hono<{
   Bindings: {

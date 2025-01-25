@@ -7,6 +7,7 @@ import { z } from "zod";
 const userSchema = z.object({
   email: z.string().min(5).max(50).email().trim(),
   password: z.string().min(8).max(50).trim(),
+  name: z.string().optional(),
 });
 type userSchema = z.infer<typeof userSchema>;
 
@@ -24,12 +25,17 @@ userRouter.post("/signup", async (c) => {
     }).$extends(withAccelerate());
 
     const preBody = await c.req.json();
-    const body = userSchema.parse(preBody);
-
+    const body = userSchema.safeParse(preBody);
+    if (!body.success) {
+      return c.json({
+        message: "invalid credentials",
+      });
+    }
+    console.log(body);
     const userCreated = await prisma.user.create({
       data: {
-        email: body.email,
-        password: body.password,
+        email: body.data.email,
+        password: body.data.password,
       },
     });
 
@@ -53,11 +59,15 @@ userRouter.post("/signin", async (c) => {
     }).$extends(withAccelerate());
 
     const preBody = await c.req.json();
-    const body = userSchema.parse(preBody);
-
+    const body = userSchema.safeParse(preBody);
+    if (!body.success) {
+      return c.json({
+        message: "invalid credentials",
+      });
+    }
     const userExists = await prisma.user.findUnique({
       where: {
-        email: body.email,
+        email: body.data.email,
       },
       select: {
         id: true,
