@@ -6,7 +6,6 @@ const Blog = () => {
         <BlogComp
           title="hola hola "
           description="Kendrick lamar is also ok kendrick lamar is also ok v kendrick lamar is also ok kendrick lamar is also ok kendrick lamar is also ok kendrick lamar is also ok v kendrick lamar is also ok kendrick lamar is also o"
-          timeStamp={"12PM, today"}
         />
       </div>
       <div className="w-[30%] h-full flex justify-start p-20 items-center flex-col">

@@ -1,8 +1,16 @@
+import { ChangeEvent } from "react";
+
 interface LabeledInputsTypes {
   name: string;
   placeholder: string;
+  onChange: (e: ChangeEvent<HTMLInputElement>) => void;
 }
-const LabeledInputs: React.FC<LabeledInputsTypes> = ({ name, placeholder }) => {
+
+const LabeledInputs: React.FC<LabeledInputsTypes> = ({
+  name,
+  placeholder,
+  onChange,
+}) => {
   return (
     <div className="flex flex-col  gap-2 m-3 w-[50%]">
       <label
@@ -13,6 +21,7 @@ const LabeledInputs: React.FC<LabeledInputsTypes> = ({ name, placeholder }) => {
       </label>
       <input
         name={name}
+        onChange={onChange}
         placeholder={placeholder}
         className="border-[0.5px] border-[#6C6F7B] px-4 rounded-md py-2 outline-0 text-[#6C6F7B]"
         type="text"

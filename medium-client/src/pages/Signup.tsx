@@ -1,8 +1,15 @@
 import { useNavigate } from "react-router-dom";
 import { Button } from "../components/Button1";
 import LabeledInputs from "../components/LabeledInputs";
+import { useState } from "react";
+import { signupInputs } from "@nitishbakshi/medium-common";
 
 const Signup = () => {
+  const [postInputs, setPostInputs] = useState<signupInputs>({
+    name: "",
+    email: "",
+    password: "",
+  });
   const navigate = useNavigate();
   return (
     <div className="w-full h-screen flex ">
@@ -20,9 +27,36 @@ const Signup = () => {
           </span>
         </div>
         <div className="w-full flex  flex-col items-center">
-          <LabeledInputs name="username" placeholder={"Enter your username"} />
-          <LabeledInputs name="email" placeholder="m@example.com" />
-          <LabeledInputs name="password" placeholder="******" />
+          <LabeledInputs
+            onChange={(e) => {
+              setPostInputs((postInputs) => ({
+                ...postInputs,
+                name: e.target.value,
+              }));
+            }}
+            name="username"
+            placeholder={"Enter your username"}
+          />
+          <LabeledInputs
+            onChange={(e) => {
+              setPostInputs((postInputs) => ({
+                ...postInputs,
+                email: e.target.value,
+              }));
+            }}
+            name="email"
+            placeholder="m@example.com"
+          />
+          <LabeledInputs
+            onChange={(e) => {
+              setPostInputs((postInputs) => ({
+                ...postInputs,
+                password: e.target.value,
+              }));
+            }}
+            name="password"
+            placeholder="******"
+          />
 
           <Button onCLickFn={() => {}} text={"Signup"}></Button>
         </div>
