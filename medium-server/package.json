@@ -5,6 +5,7 @@
     "deploy": "wrangler deploy --minify"
   },
   "dependencies": {
+    "@prisma/client": "^6.2.1",
     "hono": "^4.6.18",
     "prisma": "^6.2.1"
   },
