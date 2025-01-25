@@ -8,6 +8,7 @@ const userSchema = z.object({
   email: z.string().min(5).max(50).email().trim(),
   password: z.string().min(8).max(50).trim(),
 });
+type userSchema = z.infer<typeof userSchema>;
 
 export const userRouter = new Hono<{
   Bindings: {
