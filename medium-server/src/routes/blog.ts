@@ -89,6 +89,7 @@ blogRouter.post("/", async (c) => {
     });
   }
 });
+// --------------------------------------------
 
 blogRouter.put("/", async (c) => {
   const prisma = new PrismaClient({
@@ -101,14 +102,15 @@ blogRouter.put("/", async (c) => {
       error: "post id invalid",
     });
   }
+
   const preBody = await c.req.json();
   const body = updateBlogSchema.safeParse(preBody);
+
   if (!body.success) {
     return c.json({
       message: "invalid inputs for updating Blog",
     });
   }
-
   const response = await prisma.blog.update({
     where: { id: postId },
     data: {
@@ -120,6 +122,7 @@ blogRouter.put("/", async (c) => {
     message: "post updated",
   });
 });
+// --------------------------------------------
 
 blogRouter.get("/", async (c) => {
   const prisma = new PrismaClient({
@@ -140,6 +143,7 @@ blogRouter.get("/", async (c) => {
     post: response,
   });
 });
+// --------------------------------------------
 
 blogRouter.get("/bulk", async (c) => {
   const prisma = new PrismaClient({
