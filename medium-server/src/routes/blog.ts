@@ -16,7 +16,7 @@ export const blogRouter = new Hono<{
     userid: string;
   };
 }>();
-
+// --------------------------------------------
 blogRouter.use("/*", async (c, next) => {
   const header = c.req.header("authentication");
 
@@ -45,6 +45,7 @@ blogRouter.use("/*", async (c, next) => {
     c.json({ error });
   }
 });
+// --------------------------------------------
 
 blogRouter.post("/", async (c) => {
   try {
@@ -62,14 +63,14 @@ blogRouter.post("/", async (c) => {
       });
     }
 
-    const createBlog = await prisma.post.create({
+    const createBlog = await prisma.blog.create({
       data: {
         title: body.data.title,
         content: body.data.content,
-        published: body.data.published,
         authorId: authorId,
       },
     });
+
     if (!createBlog) {
       return c.json({
         message: "put some valid inputs (post not created)",
@@ -105,7 +106,7 @@ blogRouter.put("/", async (c) => {
     });
   }
 
-  const response = await prisma.post.update({
+  const response = await prisma.blog.update({
     where: { id: postId },
     data: {
       title: body.data.title,
@@ -122,7 +123,7 @@ blogRouter.get("/", async (c) => {
     datasourceUrl: c.env.DATABASE_URL,
   }).$extends(withAccelerate());
   const postId = c.req.query("id");
-  const response = await prisma.post.findUnique({
+  const response = await prisma.blog.findUnique({
     where: {
       id: postId,
     },
@@ -142,7 +143,7 @@ blogRouter.get("/bulk", async (c) => {
     datasourceUrl: c.env.DATABASE_URL,
   }).$extends(withAccelerate());
 
-  const allPosts = await prisma.post.findMany({
+  const allPosts = await prisma.blog.findMany({
     select: {
       title: true,
       content: true,

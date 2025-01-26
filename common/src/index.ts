@@ -15,7 +15,7 @@ export const signinSchema = z.object({
 export const createBlogSchema = z.object({
   title: z.string().min(5),
   content: z.string().min(10),
-  published: z.boolean(),
+  authorId: z.string(),
 });
 
 export const updateBlogSchema = z.object({
