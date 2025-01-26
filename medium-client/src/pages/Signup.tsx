@@ -22,7 +22,7 @@ const Signup = () => {
       );
       const token = response.data.token;
       localStorage.setItem("token", token);
-      navigate("/blog/1");
+      navigate("/blogs");
     } catch (error) {
       alert("error in signup(request failed buddy!)");
       console.log(error);

@@ -17,7 +17,6 @@ exports.createBlogSchema = zod_1.z.object({
     content: zod_1.z.string().min(10),
 });
 exports.updateBlogSchema = zod_1.z.object({
-    title: zod_1.z.string().min(5),
-    content: zod_1.z.string().min(10),
-    id: zod_1.z.string(),
+    title: zod_1.z.string().min(5).optional(),
+    content: zod_1.z.string().min(10).optional(),
 });

@@ -18,17 +18,15 @@ export const blogRouter = new Hono<{
 }>();
 // --------------------------------------------
 blogRouter.use("/*", async (c, next) => {
-  const header = c.req.header("authentication");
+  const token = c.req.header("authentication");
 
-  if (!header) {
+  if (!token) {
     c.status(403);
     return c.json({
       message: "unauthenticated",
     });
   }
   try {
-    const token = header.split(" ")[1];
-
     const verification = (await verify(token, c.env.JWT_SECRET)) as {
       id: string;
     };
@@ -42,7 +40,7 @@ blogRouter.use("/*", async (c, next) => {
     c.set("userid", verification.id);
     await next();
   } catch (error) {
-    c.json({ error });
+    return c.json({ error });
   }
 });
 // --------------------------------------------
@@ -164,7 +162,7 @@ blogRouter.get("/bulk", async (c) => {
   });
 
   if (!allPosts) {
-    c.json({
+    return c.json({
       message: "unable to fetch posts",
     });
   }

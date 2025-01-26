@@ -5,32 +5,38 @@ import { BACKEND_URL } from "../config";
 interface Blog {
   title: string;
   content: string;
-  id: number;
+  id: string;
   author: {
     name: string;
   };
 }
 
-export function useBlogs() {
+export const useBlogs = () => {
   const [loading, setLoading] = useState(true);
   const [blogs, setBlogs] = useState<Blog[]>([]);
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchBlogs = async () => {
       try {
+        console.log("inside useeffect");
         const response = await axios.get(`${BACKEND_URL}/api/v1/blog/bulk`, {
           headers: {
-            Authentication: localStorage.getItem("token"),
+            authentication: `${localStorage.getItem("token")}`,
           },
         });
-        setBlogs(response.data.blogs);
+
+        setBlogs(response.data.posts || []);
         setLoading(false);
-      } catch (e) {
-        console.log(e);
-        return null;
+        console.log("done useeffect");
+      } catch (error) {
+        console.error("Error fetching blogs:", error);
+        setBlogs([]);
+        setLoading(false);
       }
     };
-    fetchData();
+
+    fetchBlogs();
   }, []);
+
   return { loading, blogs };
-}
+};

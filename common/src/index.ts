@@ -18,9 +18,8 @@ export const createBlogSchema = z.object({
 });
 
 export const updateBlogSchema = z.object({
-  title: z.string().min(5),
-  content: z.string().min(10),
-  id: z.string(),
+  title: z.string().min(5).optional(),
+  content: z.string().min(10).optional(),
 });
 
 export type signupInputs = z.infer<typeof signupSchema>;
