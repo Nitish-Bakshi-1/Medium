@@ -9,12 +9,12 @@ export function useBlogs() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(`${BACKEND_URL}/api/v1/blog/`, {
+        const response = await axios.get(`${BACKEND_URL}/api/v1/blog/bulk`, {
           headers: {
             Authentication: localStorage.getItem("token"),
           },
         });
-        setBlogs(response.data);
+        setBlogs(response.data.blogs);
         setLoading(false);
       } catch (e) {
         console.log(e);
