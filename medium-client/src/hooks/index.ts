@@ -2,9 +2,18 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { BACKEND_URL } from "../config";
 
+interface Blog {
+  title: string;
+  content: string;
+  id: number;
+  author: {
+    name: string;
+  };
+}
+
 export function useBlogs() {
   const [loading, setLoading] = useState(true);
-  const [blogs, setBlogs] = useState([]);
+  const [blogs, setBlogs] = useState<Blog[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -21,6 +30,7 @@ export function useBlogs() {
         return null;
       }
     };
+    fetchData();
   }, []);
   return { loading, blogs };
 }

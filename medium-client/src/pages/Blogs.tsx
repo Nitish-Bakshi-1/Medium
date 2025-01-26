@@ -16,7 +16,7 @@ const Blogs = () => {
         <BlogComp
           title={blog.title}
           content={blog.content}
-          authorName={blog.author.name}
+          authorName={blog.author.name || ""}
           publishDate={"24jan , 2025"}
         />
       ))}
