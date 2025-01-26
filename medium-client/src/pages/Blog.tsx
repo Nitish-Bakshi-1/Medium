@@ -4,6 +4,7 @@ const Blog = () => {
     <div className="w-full h-screen flex border">
       <div className="w-[70%] h-full flex justify-start  p-20 items-center flex-col">
         <BlogComp
+          onClick={() => {}}
           title="hola hola"
           publishDate="25 Jan, 2025 "
           authorName="Kendrick"

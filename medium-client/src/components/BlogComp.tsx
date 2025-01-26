@@ -3,17 +3,21 @@ interface BlogType {
   content: string;
   authorName: string;
   publishDate: string;
+  onClick: () => void;
 }
 export const BlogComp = (props: BlogType) => {
   return (
-    <div className="mt-10 border-b-[0.1px] border-[#6C6F7B] pb-10 w-full ">
+    <div
+      className="mt-10 border-b-[0.1px] border-[#6C6F7B] pb-10 w-full "
+      onClick={props.onClick}
+    >
       <div className="flex items-center gap-4 mb-4">
         <Avatar alphabet={props.authorName[0]} />
         <h1 className="text-xl font-bold">{props.authorName}</h1>
         <p className="py-1 text-[#6C6F7B] font-normal">{props.publishDate}</p>
       </div>
 
-      <h1 className="text-4xl font-extrabold mb-4 capitalize">{props.title}</h1>
+      <h1 className="text-4xl font-bold mb-4 capitalize">{props.title}</h1>
 
       <h2 className="text-xl  ">{props.content}</h2>
     </div>

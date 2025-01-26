@@ -1,12 +1,14 @@
+import { useNavigate } from "react-router-dom";
 import { BlogComp } from "../components/BlogComp";
 import { useBlogs } from "../hooks";
 
 const Blogs = () => {
+  const navigate = useNavigate();
   const { loading, blogs } = useBlogs();
 
   if (loading) {
     return (
-      <div className="w-full h-screen text-slate-900 font-[900] text-8xl">
+      <div className="w-full h-screen text-slate-900 font-[300] text-7xl flex justify-center items-center">
         ...Loading
       </div>
     );
@@ -21,11 +23,12 @@ const Blogs = () => {
       <div className="flex items-center flex-col w-[50%]">
         {blogs.map((blog) => (
           <BlogComp
+            onClick={() => navigate("/blog/1")}
             key={blog.id}
             title={blog.title}
             content={blog.content}
             authorName={blog.author.name || ""}
-            publishDate={"24jan , 2025"}
+            publishDate={"24 jan, 2025"}
           />
         ))}
       </div>
