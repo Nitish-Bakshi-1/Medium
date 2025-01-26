@@ -56,8 +56,11 @@ blogRouter.post("/", async (c) => {
     }).$extends(withAccelerate());
 
     const preBody = await c.req.json();
+    console.log(preBody);
     const body = createBlogSchema.safeParse(preBody);
+    console.log(body.data);
     if (!body.success) {
+      c.status(411);
       return c.json({
         message: "invalid blog inputs",
       });
@@ -78,7 +81,7 @@ blogRouter.post("/", async (c) => {
     }
     return c.json({
       message: "post created",
-      post: createBlog,
+      blog: createBlog,
     });
   } catch (error) {
     return c.json({
